@@ -1,0 +1,28 @@
+{
+    "name": "@recursyve/streamline-icon-set-generator",
+    "version": "1.0.0-beta.0",
+    "description": "Helper to generate SVG icon sets for Streamline icons",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc",
+        "build:lib": "rimraf lib && tsc -p tsconfig.lib.json",
+        "publish-package": "npm run build:lib && npm publish . --access public",
+        "publish-package:beta": "npm run publish-package -- --tag beta",
+        "publish-package:dry-run": "npm run publish-package -- --dry-run"
+    },
+    "bin": {
+        "streamline": "./lib/index.js"
+    },
+    "author": "Recursyve",
+    "license": "MIT",
+    "dependencies": {
+        "commander": "^8.1.0",
+        "xmlbuilder2": "^3.0.1"
+    },
+    "devDependencies": {
+        "@streamlinehq/streamlinehq": "^3.0.3",
+        "@types/node": "^14.17.9",
+        "rimraf": "^3.0.2",
+        "typescript": "^4.3.5"
+    }
+}

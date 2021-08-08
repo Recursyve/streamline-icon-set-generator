@@ -1,0 +1,8 @@
+.idea/
+icons/
+node_modules/
+streamlinehq.json
+tsconfig.json
+tsconfig.lib.json
+
+src/
