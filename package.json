@@ -17,6 +17,7 @@
     "license": "MIT",
     "dependencies": {
         "commander": "^8.1.0",
+        "extract-zip": "^2.0.1",
         "xmlbuilder2": "^3.0.1"
     },
     "devDependencies": {

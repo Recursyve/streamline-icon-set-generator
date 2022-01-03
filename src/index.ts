@@ -3,6 +3,7 @@
 import { Command } from "commander";
 import { AddIconOptions, AddIconToSetCommand } from "./commands/add";
 import { SetDestinationCommand } from "./commands/destination";
+import { ImportIconOptions, ImportIconToSetCommand } from "./commands/import";
 import { NewIconSetCommand } from "./commands/new";
 import { ReloadIconSetCommand } from "./commands/reload";
 
@@ -31,6 +32,13 @@ const bootstrap = () => {
         .option("-p, --prefix [prefix]", "Add a prefix to the icon name")
         .option("-n, --name [name]", "Override icon name")
         .action((icon: string, options: AddIconOptions) => new AddIconToSetCommand(program.opts(), icon, options).run());
+
+    program
+        .command("import [path]")
+        .description("Import icons to an icon set")
+        .requiredOption("-s, --set [set]", "Icon set to add the icon to")
+        .option("-p, --prefix [prefix]", "Add a prefix to the icon name")
+        .action((path: string, options: ImportIconOptions) => new ImportIconToSetCommand(program.opts(), path, options).run());
 
     program
         .command("reload [set]")

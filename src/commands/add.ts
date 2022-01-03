@@ -14,7 +14,7 @@ export class AddIconToSetCommand {
         const config = new Config(this.options.config);
 
         const set = new IconSet(this.opts.set, config);
-        const name = set.addIcon(this.icon, this.opts.prefix, this.opts.name);
+        const name = set.addIconFromPath(this.icon, this.opts.prefix, this.opts.name);
         config.addIconToSet(this.opts.set, this.icon, name);
     }
 }

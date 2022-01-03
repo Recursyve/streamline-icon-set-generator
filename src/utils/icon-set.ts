@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { create } from "xmlbuilder2";
-import { XMLBuilder } from "xmlbuilder2/lib/interfaces";
+import { Icon } from "../models/icon.model";
 import { Config, IconConfig } from "./config";
 
 export class IconSet {
@@ -14,11 +14,14 @@ export class IconSet {
         fs.copyFileSync(path.join(__dirname, "../../icon-set.svg"), path.join(this.config.config.setDestination, `${this.name}-icons.svg`));
     }
 
-    public addIcon(iconPath: string, prefix?: string, name?: string): string {
+    public addIconFromPath(iconPath: string, prefix?: string, name?: string): string {
+        const icon = this.findIcon(iconPath);
+        return this.addIcon(icon, prefix, name);
+    }
+
+    public addIcon(icon: Icon, prefix?: string, name?: string): string {
         const file = fs.readFileSync(path.join(this.config.config.setDestination, `${this.name}-icons.svg`)).toString();
         const doc = create(file);
-
-        const [icon, style, originalName] = this.findIcon(iconPath);
 
         /**
          * Skip comment and select <svg>
@@ -33,9 +36,9 @@ export class IconSet {
         /**
          * Add icon the <defs>
          */
-        const iconName = prefix ? `${prefix}-${name ?? originalName}` : name ?? originalName;
-        icon.first().att("id", iconName);
-        defsTag.import(icon);
+        const iconName = prefix ? `${prefix}-${name ?? icon.name}` : name ?? icon.name;
+        icon.data.first().att("id", iconName);
+        defsTag.import(icon.data);
 
         const xml = doc.end({ prettyPrint: true, indent: "    ", headless: true });
         fs.writeFileSync(path.join(this.config.config.setDestination, `${this.name}-icons.svg`), xml);
@@ -50,11 +53,11 @@ export class IconSet {
 
         this.init();
         for (const icon of icons) {
-            this.addIcon(icon.path, undefined, icon.name);
+            this.addIconFromPath(icon.path, undefined, icon.name);
         }
     }
 
-    private findIcon(iconPath: string): [XMLBuilder, string, string] {
+    private findIcon(iconPath: string): Icon {
         const streamlinePath = path.join(process.cwd(), "node_modules/@streamlinehq/streamlinehq/img", iconPath);
         if (!fs.existsSync(streamlinePath)) {
             throw new Error("Icon not found");
@@ -75,6 +78,6 @@ export class IconSet {
          */
         const name = pathElements[pathElements.length - 1].replace(".svg", "");
 
-        return [create(icon), style, name];
+        return new Icon(icon, name, style);
     }
 }
