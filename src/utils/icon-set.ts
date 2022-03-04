@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { create } from "xmlbuilder2";
+import { XMLSerializedAsObject } from "xmlbuilder2/lib/interfaces";
 import { Icon } from "../models/icon.model";
 import { Config, IconConfig } from "./config";
 
@@ -11,6 +12,10 @@ export class IconSet {
         if (fs.existsSync(path.join(this.config.config.setDestination, `${this.name}-icons.svg`))) {
             return;
         }
+        fs.copyFileSync(path.join(__dirname, "../../icon-set.svg"), path.join(this.config.config.setDestination, `${this.name}-icons.svg`));
+    }
+
+    public reset(): void {
         fs.copyFileSync(path.join(__dirname, "../../icon-set.svg"), path.join(this.config.config.setDestination, `${this.name}-icons.svg`));
     }
 
@@ -38,7 +43,17 @@ export class IconSet {
          */
         const iconName = prefix ? `${prefix}-${name ?? icon.name}` : name ?? icon.name;
         icon.data.first().att("id", iconName);
-        defsTag.import(icon.data);
+
+        const currentIcon = defsTag.find((node) => {
+            const obj = node.toObject();
+            return ((obj as XMLSerializedAsObject)["svg"] as XMLSerializedAsObject)["@id"] === iconName;
+        });
+        if (currentIcon) {
+            currentIcon.each((node) => node.remove());
+            icon.data.first().each((node) => currentIcon.import(node));
+        } else {
+            defsTag.import(icon.data);
+        }
 
         const xml = doc.end({ prettyPrint: true, indent: "    ", headless: true });
         fs.writeFileSync(path.join(this.config.config.setDestination, `${this.name}-icons.svg`), xml);

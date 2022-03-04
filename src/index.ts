@@ -38,6 +38,7 @@ const bootstrap = () => {
         .description("Import icons to an icon set")
         .requiredOption("-s, --set [set]", "Icon set to add the icon to")
         .option("-p, --prefix [prefix]", "Add a prefix to the icon name")
+        .option("-o, --override", "Override the icon set")
         .action((path: string, options: ImportIconOptions) => new ImportIconToSetCommand(program.opts(), path, options).run());
 
     program
