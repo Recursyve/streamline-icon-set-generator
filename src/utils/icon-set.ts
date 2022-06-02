@@ -3,20 +3,24 @@ import * as path from "path";
 import { create } from "xmlbuilder2";
 import { XMLSerializedAsObject } from "xmlbuilder2/lib/interfaces";
 import { Icon } from "../models/icon.model";
-import { Config, IconConfig } from "./config";
+import { Config, IconConfig, IconSetConfig } from "./config";
 
 export class IconSet {
-    constructor(private name: string, private config: Config) {}
+    public readonly config: IconSetConfig | undefined;
+
+    constructor(private name: string, private globalConfig: Config) {
+        this.config = globalConfig.config.sets.find((x) => x.name === name)
+    }
 
     public init(): void {
-        if (fs.existsSync(path.join(this.config.config.setDestination, `${this.name}-icons.svg`))) {
+        if (fs.existsSync(path.join(this.globalConfig.config.setDestination, `${this.name}-icons.svg`))) {
             return;
         }
-        fs.copyFileSync(path.join(__dirname, "../../icon-set.svg"), path.join(this.config.config.setDestination, `${this.name}-icons.svg`));
+        fs.copyFileSync(path.join(__dirname, "../../icon-set.svg"), path.join(this.globalConfig.config.setDestination, `${this.name}-icons.svg`));
     }
 
     public reset(): void {
-        fs.copyFileSync(path.join(__dirname, "../../icon-set.svg"), path.join(this.config.config.setDestination, `${this.name}-icons.svg`));
+        fs.copyFileSync(path.join(__dirname, "../../icon-set.svg"), path.join(this.globalConfig.config.setDestination, `${this.name}-icons.svg`));
     }
 
     public addIconFromPath(iconPath: string, prefix?: string, name?: string): string {
@@ -25,7 +29,7 @@ export class IconSet {
     }
 
     public addIcon(icon: Icon, prefix?: string, name?: string): string {
-        const file = fs.readFileSync(path.join(this.config.config.setDestination, `${this.name}-icons.svg`)).toString();
+        const file = fs.readFileSync(path.join(this.globalConfig.config.setDestination, `${this.name}-icons.svg`)).toString();
         const doc = create(file);
 
         /**
@@ -56,12 +60,12 @@ export class IconSet {
         }
 
         const xml = doc.end({ prettyPrint: true, indent: "    ", headless: true });
-        fs.writeFileSync(path.join(this.config.config.setDestination, `${this.name}-icons.svg`), xml);
+        fs.writeFileSync(path.join(this.globalConfig.config.setDestination, `${this.name}-icons.svg`), xml);
         return iconName;
     }
 
     public reload(icons: IconConfig[]): void {
-        const filePath = path.join(this.config.config.setDestination, `${this.name}-icons.svg`)
+        const filePath = path.join(this.globalConfig.config.setDestination, `${this.name}-icons.svg`)
         if (fs.existsSync(filePath)) {
             fs.rmSync(filePath);
         }

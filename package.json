@@ -1,6 +1,6 @@
 {
     "name": "@recursyve/streamline-icon-set-generator",
-    "version": "1.0.0-beta.4",
+    "version": "1.0.0-beta.5",
     "description": "Helper to generate SVG icon sets for Streamline icons",
     "main": "index.js",
     "scripts": {
@@ -16,6 +16,7 @@
     "author": "Recursyve",
     "license": "MIT",
     "dependencies": {
+        "axios": "^0.27.2",
         "commander": "^8.1.0",
         "extract-zip": "^2.0.1",
         "xmlbuilder2": "^3.0.1"

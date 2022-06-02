@@ -8,6 +8,7 @@ export interface ConfigFile {
 
 export interface IconSetConfig {
     name: string;
+    families: string[];
     icons: IconConfig[];
 }
 
@@ -45,6 +46,7 @@ export class Config {
 
         this.config.sets.push({
             name,
+            families: [],
             icons: []
         });
         this.saveFile();
